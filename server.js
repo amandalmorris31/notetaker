@@ -2,6 +2,9 @@
 // =============================================================
 var express = require("express");
 var path = require("path");
+var db = require("./db/db.json")
+
+
 
 // Sets up the Express App
 // =============================================================
@@ -14,24 +17,46 @@ app.use(express.json());
 //serve static contenct for the app from the public directory in the application directory
 app.use(express.static("public"));
 
-// Notes (DATA)
-// =============================================================
-var notes = [
-  {
-    routeName: "routename",
-  },
-];
+
 
 // Routes
 // =============================================================
 
 // Basic route that sends the user first to the AJAX Page
-app.get("/", function(req, res) {
+app.get("/notes", function(req, res) {
   res.sendFile(path.join(__dirname, "./public/notes.html"));
 });
 
-app.get("/add", function(req, res) {
-  res.sendFile(path.join(__dirname, "./public/index.html"));
+app.get("/api/notes", function(req, res) {
+  return res.json(db);
+});
+
+//  * POST `/api/notes`
+// Should receive a new note to save on the request body,
+// add it to the `db.json` file, and 
+//then return the new note to the client.
+
+app.post("/api/notes", function(req, res) {
+  req.body.id=db.length;
+
+  db.push(req.body)
+  return res.json(req.body);
+});
+
+//* DELETE `/api/notes/:id` -
+// Should receive a query parameter containing the id of a note
+// to delete. This means you'll need to find a way to give each
+// note a unique `id` when it's saved. In order to delete a note,
+// you'll need to read all notes from the `db.json` file, 
+//remove the note with the given `id` property, and
+// then rewrite the notes to the `db.json` file.
+
+
+app.delete("/api/notes/:id", function(req, res) {
+
+  console.log(db.splice(req.params.id, 1));
+
+ 
 });
 
 // Displays all notes
@@ -69,6 +94,10 @@ app.post("/api/notes", function(req, res) {
   notes.push(newNote);
 
   res.json(newNote);
+});
+
+app.get("*", function(req, res) {
+  res.sendFile(path.join(__dirname, "./public/index.html"));
 });
 
 // Starts the server to begin listening
