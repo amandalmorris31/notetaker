@@ -19,10 +19,6 @@ app.use(express.json());
 //serve static contenct for the app from the public directory in the application directory
 app.use(express.static("public"));
 
-
-
-
-
 // Routes
 // =============================================================
 
@@ -82,6 +78,7 @@ app.delete("/api/notes/:id", function(req, res) {
   }
 
   console.log("Success!");
+  return res.send("This was deleted");
 
 });
 
