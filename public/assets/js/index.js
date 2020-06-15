@@ -140,6 +140,7 @@ const getAndRenderNotes = () => {
   return getNotes().then(renderNoteList);
 };
 
+
 $saveNoteBtn.on("click", handleNoteSave);
 $noteList.on("click", ".list-group-item", handleNoteView);
 $newNoteBtn.on("click", handleNewNoteView);

@@ -2,7 +2,8 @@
 // =============================================================
 var express = require("express");
 var path = require("path");
-var db = require("./db/db.json")
+var db = require("./db/db.json");
+var fs = require("fs");
 
 
 
@@ -11,11 +12,14 @@ var db = require("./db/db.json")
 var app = express();
 var PORT = process.env.PORT || 3000;
 
+
 // Sets up the Express app to handle data parsing
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 //serve static contenct for the app from the public directory in the application directory
 app.use(express.static("public"));
+
+
 
 
 
@@ -38,10 +42,22 @@ app.get("/api/notes", function(req, res) {
 
 app.post("/api/notes", function(req, res) {
   req.body.id=db.length;
-
   db.push(req.body)
+
+  fs.writeFile("./db/db.json", JSON.stringify(db), function(err) {
+
+    if (err) {
+      return console.log(err);
+    }
+  
+    console.log("Success!");
+  
+  });
   return res.json(req.body);
+
 });
+
+
 
 //* DELETE `/api/notes/:id` -
 // Should receive a query parameter containing the id of a note
@@ -53,8 +69,22 @@ app.post("/api/notes", function(req, res) {
 
 
 app.delete("/api/notes/:id", function(req, res) {
+  //verify the updatedata
+ 
 
-  console.log(db.splice(req.params.id, 1));
+ //console.log(db.splice(req.params.id, 1));
+ //update data
+
+ fs.writeFile("./db/db.json", JSON.stringify(db.splice(req.params.id, 1)), function(err) {
+
+  if (err) {
+    return console.log(err);
+  }
+
+  console.log("Success!");
+
+});
+
 
  
 });
